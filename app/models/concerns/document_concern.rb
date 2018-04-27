@@ -7,25 +7,59 @@ module DocumentConcern
     after_touch() {__elasticsearch__.index_document}
 
     analyzers = {
-        "analysis": {
-            "analyzer": {
-                "folding": {
-                    "tokenizer": "standard",
-                    "filter": ["lowercase", "asciifolding"]
+        analysis: {
+            analyzer: {
+                stop_words_analyzer: {
+                    tokenizer: "standard",
+                    filter: ["lowercase", "asciifolding", "stop", "trim"]
+                },
+                keyword_aggregation_analyzer: {
+                    tokenizer: "keyword",
+                    filter: ["lowercase", "asciifolding", "trim"]
                 }
+            },
+            filter: {
+                brazilian_stop: {
+                    type: "stop",
+                    stopwords: ["_brazilian_", "->"]
+                },
             }
         }
     }
     settings index: analyzers do
-      mapping do
-        indexes :document_file_name, type: 'text', boost: 2
-        indexes :document_file_name, type: 'text', index_options: 'offsets', analyzer: 'brazilian_stop_words_analyzer'
+      mapping dynamic: 'false' do
+        indexes :id, type: 'long'
+        indexes :document_file_name, type: 'text', boost: 2, analyzer: 'stop_words_analyzer'
+        indexes :content, type: 'text', analyzer: 'stop_words_analyzer', index_options: 'offsets'
       end
     end
 
+
+    def self.search(query)
+
+      search = Jbuilder.encode do |json|
+        json.query do
+          json.match do
+            json.content "#{query}"
+          end
+        end
+
+        json.highlight do
+          json.pre_tags ['<em>']
+          json.post_tags ['</em>']
+          json.fields do
+            json.set! 'document_file_name', {}
+            json.set! 'content', {}
+          end
+        end
+      end
+
+      puts search
+      return __elasticsearch__.search(search)
+    end
   end
 
   def as_indexed_json(options = {})
-    as_json(only: [:id, :document_file_name, :document_text_plain])
+    as_json(only: [:id, :document_file_name, :content])
   end
 end

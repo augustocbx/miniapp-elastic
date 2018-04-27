@@ -1,19 +1,13 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Title:</strong>
-  <%= @document.title %>
-</p>
-
-<p>
-  <strong>Description:</strong>
-  <%= @document.description %>
-</p>
-
-<p>
   <strong>Document:</strong>
-  <%= @document.document_file %>
+  <%= @document.document.original_filename %>
 </p>
+
+<br />
+<br />
+<br />
 
 <%= link_to 'Edit', edit_document_path(@document) %> |
 <%= link_to 'Back', documents_path %>

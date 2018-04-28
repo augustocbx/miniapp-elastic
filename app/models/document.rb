@@ -16,7 +16,8 @@ class Document < ApplicationRecord
   include DocumentConcern
 
   has_attached_file :document, { preserve_files: false }
-  validates_attachment_file_name :document, :matches => [/png\Z/, /jpe?g\Z/, /gif\Z/, /pdf\Z/, /doc\Z/, /odt\Z/, /docx\Z/]
+  validates_attachment_file_name :document, :matches => [/png\Z/, /jpe?g\Z/, /gif\Z/, /pdf\Z/, /doc\Z/, /odt\Z/, /docx\Z/, /chm\Z/]
+  validates_presence_of :document
 
   before_save :extract_text
 
@@ -28,7 +29,7 @@ class Document < ApplicationRecord
     # puts "java -cp #{jars_path}/jai_core-1.1.3.jar:#{jars_path}/jai_imageio.jar:#{jars_path}/jbig2_1.4.jar:#{jars_path}/levigo-jbig2-imageio-1.6.1.jar:#{jars_path}/tika-parsers-1.13.jar -jar bin/tika-app-1.12.jar --text-main #{self.document.queued_for_write[:original].path}"
     self.content = `java -cp #{jars_path}/jai_core-1.1.3.jar:#{jars_path}/jai_imageio.jar:#{jars_path}/jbig2_1.4.jar:#{jars_path}/levigo-jbig2-imageio-1.6.1.jar:#{jars_path}/tika-parsers-1.13.jar -jar bin/tika-app-1.12.jar --text-main #{self.document.queued_for_write[:original].path}`[0..33000]
     if self.content.empty?
-      self.content = `tesseract ~/Downloads/Southern_Life_in_Southern_Literature_text_page_322.jpg stdout`
+      self.content = `tesseract #{self.document.queued_for_write[:original].path} stdout`
     end
     puts "#{self.document.original_filename} indexed!"
   end

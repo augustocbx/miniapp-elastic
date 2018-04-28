@@ -14,8 +14,7 @@
     <% @documents.each do |document| %>
       <tr>
         <td><%= document.document.original_filename %></td>
-        <td><%= link_to 'Show', document %></td>
-        <td><%= link_to 'Edit', edit_document_path(document) %></td>
+        <td><%= link_to 'Download', document.document.url %></td>
         <td><%= link_to 'Destroy', document, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
@@ -25,3 +24,5 @@
 <br>
 
 <%= link_to 'New Document', new_document_path %>
+
+<%= link_to 'Go to Elastic', documents_search_path %>

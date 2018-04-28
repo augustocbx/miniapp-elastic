@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'documents/search'
   resources :documents
 
 

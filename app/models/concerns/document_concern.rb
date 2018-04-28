@@ -11,18 +11,8 @@ module DocumentConcern
             analyzer: {
                 stop_words_analyzer: {
                     tokenizer: "standard",
-                    filter: ["lowercase", "asciifolding", "stop", "trim"]
-                },
-                keyword_aggregation_analyzer: {
-                    tokenizer: "keyword",
-                    filter: ["lowercase", "asciifolding", "trim"]
+                    filter: ["lowercase", "asciifolding", "stop", "trim", "snowball"]
                 }
-            },
-            filter: {
-                brazilian_stop: {
-                    type: "stop",
-                    stopwords: ["_brazilian_", "->"]
-                },
             }
         }
     }

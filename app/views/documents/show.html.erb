@@ -4,10 +4,14 @@
   <strong>Document:</strong>
   <%= @document.document.original_filename %>
 </p>
+<p>
+  <strong>Elastic:</strong>
+  <%= @document.__elasticsearch__.as_indexed_json['content'] %>
+</p>
 
 <br />
 <br />
 <br />
 
-<%= link_to 'Edit', edit_document_path(@document) %> |
-<%= link_to 'Back', documents_path %>
+<!--<%#= link_to 'Edit', edit_document_path(@document) %> |-->
+<%= link_to 'Voltar', documents_path %>
